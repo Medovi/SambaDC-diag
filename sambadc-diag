@@ -145,3 +145,8 @@ test_hostname(){
     
     [[ "$host" == *.* ]] && [[ "$host" != $.* ]] && [[ "$(host "$host" 2> /dev/null)" ]]
 }
+
+# Проверка состояния службы Samba
+samba_service_status(){
+    systemctl status samba.service 2> /dev/null | grep "Active: active (running)" > /dev/null
+}
