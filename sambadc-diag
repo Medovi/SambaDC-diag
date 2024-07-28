@@ -228,3 +228,11 @@ check_nameserver(){
 	
     fi
 }
+
+# Проверка работоспособности Kerberos и ldap (должны иметься SRV записи)
+check_kerberos(){
+    host -t srv _kerberos._udp."$(hostname -d)" | grep -q "has SRV record 0 100 88" &&
+    host -t srv _ldap._tcp."$(hostname -d)" | grep -q "has SRV record 0 100 389"
+    # Ещё нужна проверка <имя_хоста>.<доменное_имя>, но здесь всегда показывает, что нет записей SRV
+    # Возможно также нужна проверка klist, убедиться, что билет был получен, но скорее всего это лишнее
+}
