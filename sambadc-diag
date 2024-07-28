@@ -174,3 +174,10 @@ fsmo_dc_check(){
     samba-tool fsmo show | awk '{print $1}'
     #echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
 }
+
+# Проверка на наличие конфигурационных файлов DNS
+presence_files_and_dirs_dns(){
+    # Сначала нужно определить какой установлен внутренний DNS-сервер, а после уже выполнять тест
+    # в зависимости от определённого DNS-сервера (SAMBA_INTERNAL, BIND9_FLATLINE, BIND9_DLZ, NONE)
+    test -s /etc/resolv.conf && test -s /etc/bind/options.conf && test -s /etc/bind/resolvconf-options.conf
+}
