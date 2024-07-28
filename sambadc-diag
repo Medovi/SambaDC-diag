@@ -171,7 +171,7 @@ ntp_status(){
 # Проверка fsmo-ролей контроллера домена
 fsmo_dc_check(){
     echo "У контроллера домена следующие fsmo-роли:"
-    samba-tool fsmo show | awk '{print $1}'
+    samba-tool fsmo show 2> /dev/null | awk '{print $1}'
     #echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
 }
 
@@ -247,11 +247,10 @@ task samba_service_status
 task other_services_status
 task samba_dbcheck
 task ntp_status
-#task fsmo_dc_check
-fsmo_dc_check
+task fsmo_dc_check
+#fsmo_dc_check
 #task presence_files_and_dirs_dns
 task open_ports
-task ntp_status
 task dns_forward_check
 task check_nameserver
 task check_kerberos
