@@ -138,3 +138,10 @@ samba_version(){
 	[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
     fi
 }
+
+# Проверка полного доменного имени хоста (FQDN), нужно пересмотреть данный тест
+test_hostname(){
+    local host="$(hostname -f)"
+    
+    [[ "$host" == *.* ]] && [[ "$host" != $.* ]] && [[ "$(host "$host" 2> /dev/null)" ]]
+}
