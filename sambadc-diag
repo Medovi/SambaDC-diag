@@ -162,3 +162,8 @@ samba_dbcheck(){
 # Только от рута
     samba-tool dbcheck 2> /dev/null | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)"
 }
+
+# Проверка синхронизации времени (активности сервиса NTP)
+ntp_status(){
+    timedatectl 2> /dev/null | grep -q "NTP service: active" > /dev/null
+}
