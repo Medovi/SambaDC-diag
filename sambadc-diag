@@ -156,3 +156,9 @@ other_services_status(){
     systemctl status smbd.service 2> /dev/null | grep "Active: active (running)" > /dev/null &&
     systemctl status winbindd.service 2> /dev/null | grep "Active: active (running)" > /dev/null
 }
+
+# Проверка состояния базы SambaAD
+samba_dbcheck(){
+# Только от рута
+    samba-tool dbcheck 2> /dev/null | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)"
+}
