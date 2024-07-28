@@ -1,0 +1,66 @@
+[Alterator Entry]
+Name=sambadc-diag
+Type=diag
+DisplayName=A tool for domain controller diagnostics
+DisplayName[ru_RU]=Инструмент для диагностики контроллера домена
+
+Comment=The tool is designed to diagnose the status of a domain controller
+Comment[ru_RU]=Инструмент предназначен для диагностики состояния контроллера домена
+Icon=system-run
+ReportSuffix=zip
+
+[permissions_sysvol]
+DisplayName=Checking access rights to the Sysvol directory
+DisplayName[ru_RU]=Проверка прав доступа к каталогу Sysvol
+
+[is_not_empty_sysvol]
+DisplayName=Проверка размера каталога sysvol
+DisplayName[ru_RU]=Checking the size of the sysvol directory
+
+[admx_version]
+DisplayName=Проверка на установленный пакет admx-basealt
+DisplayName[ru_RU]=Checking for the installed admx-basealt package
+
+[presence_files_and_dirs_samba]
+DisplayName=Проверка на существование служебных каталогов и конфигурационных файлов Samba
+DisplayName[ru_RU]=Checking for the existence of Samba service directories and configuration files
+
+[samba_version]
+DisplayName=Проверка последней установленной версии Samba
+DisplayName[ru_RU]=Checking the latest installed version of Samba
+
+[test_hostname]
+DisplayName=Проверка полного доменного имени хоста (FQDN)
+DisplayName[ru_RU]=Checking the full domain name of the host (FQDN)
+
+[samba_service_status]
+DisplayName=Проверка состояния службы Samba
+DisplayName[ru_RU]=Checking the status of the Samba service
+
+[other_services_status]
+DisplayName=Проверка состояния служб smbd и winbindd
+DisplayName[ru_RU]=Checking the status of smbd and winbindd services
+
+[samba_dbcheck]
+DisplayName=Проверка состояния баз SambaAD
+DisplayName[ru_RU]=Checking the status of SambaAD databases
+
+[ntp_status]
+DisplayName=Проверка синхронизации времени (активного сервиса NTP)
+DisplayName[ru_RU]=Checking time synchronization (active NTP service)
+
+[open_ports]
+DisplayName=Проверка открытых портов
+DisplayName[ru_RU]=Checking open ports
+
+[dns_forward_check]
+DisplayName=Проверка работы рекурсивных DNS-запросов
+DisplayName[ru_RU]=Checking the operation of recursive DNS queries
+
+[check_nameserver]
+DisplayName=Checking for the presence of the nameserver string in the configuration file "/etc/resolv.conf"
+DisplayName[ru_RU]=Проверка наличия строки nameserver в конфигурационном файле "/etc/resolv.conf"
+
+[check_kerberos]
+DisplayName=Проверка работоспособности Kerberos и LDAP
+DisplayName[ru_RU]=Checking the health of Kerberos and LDAP
