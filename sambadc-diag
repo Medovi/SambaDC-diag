@@ -181,3 +181,31 @@ presence_files_and_dirs_dns(){
     # в зависимости от определённого DNS-сервера (SAMBA_INTERNAL, BIND9_FLATLINE, BIND9_DLZ, NONE)
     test -s /etc/resolv.conf && test -s /etc/bind/options.conf && test -s /etc/bind/resolvconf-options.conf
 }
+
+# Проверка открытых (прослушиваемых) портов
+open_ports(){
+    local ports=(
+	53
+	88
+	123
+	135
+	137
+	138
+	139
+	389
+	445
+	464
+	636
+	3268
+	3269
+	# Возможно эти порты необязательны
+	#$(seq 49152 65535)
+    )
+
+    for port in "${ports[@]}"; do
+	if ! ss -tuln | grep -q ":$port\s"; then
+	    return 1
+	fi
+    done
+
+}
