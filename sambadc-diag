@@ -150,3 +150,9 @@ test_hostname(){
 samba_service_status(){
     systemctl status samba.service 2> /dev/null | grep "Active: active (running)" > /dev/null
 }
+
+# Проверка состояния служб smbd и winbindd (в случае чего можно ещё добавить службы)
+other_services_status(){
+    systemctl status smbd.service 2> /dev/null | grep "Active: active (running)" > /dev/null &&
+    systemctl status winbindd.service 2> /dev/null | grep "Active: active (running)" > /dev/null
+}
