@@ -167,3 +167,10 @@ samba_dbcheck(){
 ntp_status(){
     timedatectl 2> /dev/null | grep -q "NTP service: active" > /dev/null
 }
+
+# Проверка fsmo-ролей контроллера домена
+fsmo_dc_check(){
+    echo "У контроллера домена следующие fsmo-роли:"
+    samba-tool fsmo show | awk '{print $1}'
+    #echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
+}
