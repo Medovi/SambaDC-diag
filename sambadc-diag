@@ -236,3 +236,24 @@ check_kerberos(){
     # Ещё нужна проверка <имя_хоста>.<доменное_имя>, но здесь всегда показывает, что нет записей SRV
     # Возможно также нужна проверка klist, убедиться, что билет был получен, но скорее всего это лишнее
 }
+
+task permissions_sysvol
+task is_not_empty_sysvol
+task admx_version
+task presence_files_and_dirs_samba
+task samba_version
+task test_hostname
+task samba_service_status
+task other_services_status
+task samba_dbcheck
+task ntp_status
+#task fsmo_dc_check
+fsmo_dc_check
+#task presence_files_and_dirs_dns
+task open_ports
+task ntp_status
+task dns_forward_check
+task check_nameserver
+task check_kerberos
+
+exit "$global_retval"
