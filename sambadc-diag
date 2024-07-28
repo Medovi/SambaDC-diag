@@ -209,3 +209,9 @@ open_ports(){
     done
 
 }
+
+# Проверка работы рекурсивных днс-запросов (валидность ip-адреса в smb.conf)
+dns_forward_check(){
+    validate_ipv4="^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$"
+    [[ "$(grep "dns forwarder =" /etc/samba/smb.conf | awk '{print $4}')" =~ $validate_ipv4 ]]
+}
