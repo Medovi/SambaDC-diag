@@ -113,3 +113,8 @@ admx_version(){
 	[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
     fi
 }
+
+# Проверка: существуют ли служебные каталоги и конфигурационные файлы самбы?
+presence_files_and_dirs_samba(){
+    test -s /etc/resolvconf.conf && test -s /etc/samba/smb.conf && test -d /var/lib/samba && test -d /var/lib/samba/sysvol && test -d /var/cache/samba
+}
