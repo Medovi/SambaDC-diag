@@ -215,3 +215,16 @@ dns_forward_check(){
     validate_ipv4="^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$"
     [[ "$(grep "dns forwarder =" /etc/samba/smb.conf | awk '{print $4}')" =~ $validate_ipv4 ]]
 }
+
+# Проверка на то, есть ли строка nameserver 127.0.0.1 или nameserver <адрес_интерфейса>
+check_nameserver(){
+    local interface="enp0s3"
+    #local ip_addr="$(ifconfig "$interface" | grep "inet addr:" | cut -d: -f2 | awk '{print $1}')"
+    local ip_addr="$(hostname -i)"
+    local nameservers="$(grep "nameserver " /etc/resolv.conf | awk '{print $2}')"
+
+    if ! echo "$nameservers" | grep -q "^$ip_addr$" || echo "$nameservers" | grep -q "127.0.0.1"; then
+	return 1
+	
+    fi
+}
