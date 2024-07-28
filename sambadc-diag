@@ -91,3 +91,25 @@ is_not_empty_sysvol(){
     [ "$(ls -a "/var/lib/samba/sysvol" 2> /dev/null)" ]
 	
 }
+
+# Проверка на установленный пакет admx-basealt
+admx_version(){
+    #rpm -q admx-basealt | grep -q '^admx-basealt-\+[[:digit:]\+\.[:digit:]\+\.[:digit:]\+\.[:digit:]]\+-alt1.noarch'
+
+    # тест следует выполнять, выполнив перед этип apt-get update (обновление баз пакетов)
+    # но apt-get update следует запускать от рута, поэтому при запуске от рута проблем с тестом не будет
+    #apt-get update > /dev/null
+    policy_output="$(apt-cache policy admx-basealt 2> /dev/null)"
+    installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
+    candidate_version="$(echo "$policy_output" | grep "Кандидат:" | awk '{print $2}')"
+
+    if [ -z "$installed_version" ] || [ -z "$candidate_version" ]; then
+	return 1
+    fi
+
+    if [ "$installed_version" == "$candidate_version" ]; then
+	return 0
+    else
+	[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
+    fi
+}
