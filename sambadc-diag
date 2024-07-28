@@ -77,3 +77,10 @@ task(){
 	*) fatal "Неверное значение: $cmd" ;;
     esac
 }
+
+#Проверка прав доступа к каталогу sysvol (без использования samba-tools)
+permissions_sysvol(){
+    # Прав доступа к каталогам не будет у обычного пользователя, но должны быть у рута
+    local path="/var/lib/samba/sysvol"
+    test -r "$path" && test -w "$path" && test -x "$path"
+}
