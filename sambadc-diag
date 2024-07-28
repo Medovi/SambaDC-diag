@@ -84,3 +84,10 @@ permissions_sysvol(){
     local path="/var/lib/samba/sysvol"
     test -r "$path" && test -w "$path" && test -x "$path"
 }
+
+# Проврека на то, что каталог sysvol не пустой
+is_not_empty_sysvol(){
+    # От рута проблем нет
+    [ "$(ls -a "/var/lib/samba/sysvol" 2> /dev/null)" ]
+	
+}
