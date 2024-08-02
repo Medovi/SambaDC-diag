@@ -1,0 +1,123 @@
+[Alterator Entry]
+Name = sambadc-diag
+Type = Diagnostictool
+DisplayName = A tool for domain controller diagnostics
+DisplayName[ru_RU] = Инструмент для диагностики контроллера домена
+DisplayName[en_EN] = A tool for domain controller diagnostics
+Comment = The tool is designed to diagnose the status of a domain controller
+Comment[ru_RU] = Инструмент предназначен для диагностики состояния контроллера домена
+Comment[en_EN] = The tool is designed to diagnose the status of a domain controller
+Icon = system-run
+ReportSuffix = txt
+
+[permissions_sysvol]
+DisplayName = permissions_sysvol
+DisplayName[ru_RU] = Проверка прав доступа к каталогу Sysvol
+DisplayName[en_EN] = Checking access rights to the Sysvol directory
+Comment = Checking access rights to the Sysvol directory
+Comment[ru_RU] = Проверка прав доступа к каталогу Sysvol
+Comment[en_EN] = Checking access rights to the Sysvol directory
+
+[is_not_empty_sysvol]
+DisplayName = is_not_empty_sysvol
+DisplayName[ru_RU] = Проверка размера каталога sysvol
+DisplayName[en_EN] = check empty syslog catalog
+Comment = check empty syslog catalog
+Comment[ru_RU] = Проверка размера каталога sysvol
+Comment[en_EN] = check empty syslog catalog
+
+[admx_version]
+DisplayName = admx_version
+DisplayName[ru_RU] = Проверка на установленный пакет admx-basealt
+DisplayName[en_EN] = Checking for the installed admx-basealt package
+Comment = Checking for the installed admx-basealt package
+Comment[ru_RU] = Проверка на установленный пакет admx-basealt
+Comment[en_EN] = Checking for the installed admx-basealt package
+
+[presence_files_and_dirs_samba]
+DisplayName = presence_files_and_dirs_samba
+DisplayName[ru_RU] = Проверка на существование служебных каталогов и конфигурационных файлов Samba
+DisplayName[en_EN] = Checking for the existence of Samba service directories and configuration files
+Comment = Checking for the existence of Samba service directories and configuration files
+Comment[ru_RU] = Проверка на существование служебных каталогов и конфигурационных файлов Samba
+Comment[en_EN] = Checking for the existence of Samba service directories and configuration files
+
+[samba_version]
+DisplayName = samba_version
+DisplayName[ru_RU] = Проверка последней установленной версии Samba
+DisplayName[en_EN] = Checking the latest installed version of Samba
+Comment = Checking the latest installed version of Samba
+Comment[ru_RU] = Проверка последней установленной версии Samba
+Comment[en_EN] = Checking the latest installed version of Samba
+
+[test_hostname]
+DisplayName = test_hostname
+DisplayName[ru_RU] = Проверка полного доменного имени хоста (FQDN)
+DisplayName[en_EN] = Checking the full domain name of the host (FQDN)
+Comment = Checking the full domain name of the host (FQDN)
+Comment[ru_RU] = Проверка полного доменного имени хоста (FQDN)
+Comment[en_EN] = Checking the full domain name of the host (FQDN)
+
+[samba_service_status]
+DisplayName = samba_service_status
+DisplayName[ru_RU] = Проверка состояния службы Samba
+DisplayName[en_EN] = Checking the status of the Samba service
+Comment = Checking the status of the Samba service
+Comment[ru_RU] = Проверка состояния службы Samba
+Comment[en_EN] = Checking the status of the Samba service
+
+[other_services_status]
+DisplayName = other_services_status
+DisplayName[ru_RU] = Проверка состояния служб smbd и winbindd
+DisplayName[en_EN] = Checking the status of smbd and winbindd services
+Comment = Checking the status of smbd and winbindd services
+Comment[ru_RU] = Проверка состояния служб smbd и winbindd
+Comment[en_EN] = Checking the status of smbd and winbindd services
+
+[samba_dbcheck]
+DisplayName = samba_dbcheck
+DisplayName[ru_RU] = Проверка состояния баз SambaAD
+DisplayName[en_EN] = Checking the status of SambaAD databases
+Comment = Checking the status of SambaAD databases
+Comment[ru_RU] = Проверка состояния баз SambaAD
+Comment[en_EN] = Checking the status of SambaAD databases
+
+[ntp_status]
+DisplayName = ntp_status
+DisplayName[ru_RU] = Проверка синхронизации времени (активного сервиса NTP)
+DisplayName[en_EN] = Checking time synchronization (active NTP service)
+Comment = Checking time synchronization (active NTP service)
+Comment[ru_RU] = Проверка синхронизации времени (активного сервиса NTP)
+Comment[en_EN] = Checking time synchronization (active NTP service)
+
+[open_ports]
+DisplayName = open_ports
+DisplayName[ru_RU] = Проверка открытых портов
+DisplayName[en_EN] = Checking open ports
+Comment = Checking open ports
+Comment[ru_RU] = Проверка открытых портов
+Comment[en_EN] = Checking open ports
+
+[dns_forward_check]
+DisplayName = dns_forward_check
+DisplayName[ru_RU] = Проверка работы рекурсивных DNS-запросов
+DisplayName[en_EN] = Checking the operation of recursive DNS queries
+Comment = Checking the operation of recursive DNS queries
+Comment[ru_RU] = Проверка работы рекурсивных DNS-запросов
+Comment[en_EN] = Checking the operation of recursive DNS queries
+
+[check_nameserver]
+DisplayName = check_nameserver
+DisplayName[ru_RU] = Проверка наличия строки nameserver в конфигурационном файле "/etc/resolv.conf"
+DisplayName[en_EN] = Checking for the presence of the nameserver string in the configuration file "/etc/resolv.conf"
+Comment = Checking for the presence of the nameserver string in the configuration file "/etc/resolv.conf"
+Comment[ru_RU] = Проверка наличия строки nameserver в конфигурационном файле "/etc/resolv.conf"
+Comment[en_EN] = Checking for the presence of the nameserver string in the configuration file "/etc/resolv.conf"
+
+[check_kerberos]
+DisplayName = check_kerberos
+DisplayName[ru_RU] = Проверка работоспособности Kerberos и LDAP
+DisplayName[en_EN] = Checking the health of Kerberos and LDAP
+Comment = Checking the health of Kerberos and LDAP
+Comment[ru_RU] = Проверка работоспособности Kerberos и LDAP
+Comment[en_EN] = Checking the health of Kerberos and LDAP

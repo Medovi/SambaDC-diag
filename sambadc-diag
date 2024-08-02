@@ -92,51 +92,53 @@ is_not_empty_sysvol(){
 	
 }
 
-# Проверка на установленный пакет admx-basealt
+# Информация о версии admx-basealt
 admx_version(){
-    #rpm -q admx-basealt | grep -q '^admx-basealt-\+[[:digit:]\+\.[:digit:]\+\.[:digit:]\+\.[:digit:]]\+-alt1.noarch'
+	#rpm -q admx-basealt | grep -q '^admx-basealt-\+[[:digit:]\+\.[:digit:]\+\.[:digit:]\+\.[:digit:]]\+-alt1.noarch'
 
-    # тест следует выполнять, выполнив перед этип apt-get update (обновление баз пакетов)
-    # но apt-get update следует запускать от рута, поэтому при запуске от рута проблем с тестом не будет
-    #apt-get update > /dev/null
-    policy_output="$(apt-cache policy admx-basealt 2> /dev/null)"
-    installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
-    candidate_version="$(echo "$policy_output" | grep "Кандидат:" | awk '{print $2}')"
+	# тест следует выполнять, выполнив перед этип apt-get update (обновление баз пакетов)
+	# но apt-get update следует запускать от рута, поэтому при запуске от рута проблем с тестом не будет
+	#apt-get update > /dev/null
+	#policy_output="$(apt-cache policy admx-basealt 2> /dev/null)"
+	#installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
+	#candidate_version="$(echo "$policy_output" | grep "Кандидат:" | awk '{print $2}')"
 
-    if [ -z "$installed_version" ] || [ -z "$candidate_version" ]; then
-	return 1
-    fi
+	#if [ -z "$installed_version" ] || [ -z "$candidate_version" ]; then
+		#return 1
+	#fi
 
-    if [ "$installed_version" == "$candidate_version" ]; then
-	return 0
-    else
-	[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
-    fi
+	#if [ "$installed_version" == "$candidate_version" ]; then
+		#return 0
+	#else
+		#[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
+	#fi
+	packet_name="admx-basealt"
+	policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
+	local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
+
+	if [ -z "$installed_version" ]; then
+		echo "Пакет "$packet_name" не установлен в системе"
+	else
+		echo "Установлена следующая версия пакета "$packet_name": "$installed_version""
+	fi
+}
+
+# Информация о версии самбы
+samba_version(){
+	packet_name="samba"
+	policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
+	local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
+
+	if [ -z "$installed_version" ]; then
+		echo "Пакет "$packet_name" не установлен в системе"
+	else
+		echo "Установлена следующая версия пакета "$packet_name": "$installed_version""
+	fi
 }
 
 # Проверка: существуют ли служебные каталоги и конфигурационные файлы самбы?
 presence_files_and_dirs_samba(){
     test -s /etc/resolvconf.conf && test -s /etc/samba/smb.conf && test -d /var/lib/samba && test -d /var/lib/samba/sysvol && test -d /var/cache/samba
-}
-
-# Проверка последней установленной версии самбы
-samba_version(){
-    # тест следует выполнять, выполнив перед этим apt-get update (обновление баз пакетов),
-    # но apt-get update следует запускать от рута, поэтому при запуске от рута проблем с тестом не будет
-    #apt-get update > /dev/null
-    policy_output="$(apt-cache policy samba 2> /dev/null)"
-    installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
-    candidate_version="$(echo "$policy_output" | grep "Кандидат:" | awk '{print $2}')"
-
-    if [ -z "$installed_version" ] || [ -z "$candidate_version" ]; then
-	return 1
-    fi
-
-    if [ "$installed_version" == "$candidate_version" ]; then
-	return 0
-    else
-	[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
-    fi
 }
 
 # Проверка полного доменного имени хоста (FQDN), нужно пересмотреть данный тест
@@ -237,11 +239,11 @@ check_kerberos(){
     # Возможно также нужна проверка klist, убедиться, что билет был получен, но скорее всего это лишнее
 }
 
-task permissions_sysvol
+#task permissions_sysvol
 task is_not_empty_sysvol
+task samba_version
 task admx_version
 task presence_files_and_dirs_samba
-task samba_version
 task test_hostname
 task samba_service_status
 task other_services_status
