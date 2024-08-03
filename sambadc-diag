@@ -289,8 +289,31 @@ samba_version(){
 
 # Проверка: существуют ли служебные каталоги и конфигурационные файлы самбы?
 presence_files_and_dirs_samba(){
-    test -s /etc/resolvconf.conf && test -s /etc/samba/smb.conf && test -d /var/lib/samba && test -d /var/lib/samba/sysvol && test -d /var/cache/samba
+	local retval=0
+	local file1="/etc/resolvconf.conf"
+	local file2="/etc/samba/smb.conf"
+	local file3="/var/lib/samba"
+	local file4="/var/lib/samba/sysvol"
+	local file5="/var/cache/samba"
+	
+	_command test -s "$file1" | head -n 1
+	test -s "$file1" && echo -e "Файл "$file1" существует.\n" || { echo -e "Отсутствует файл "$file1".\n" && retval=2; }
+
+	_command test -s "$file2" | head -n 1
+	test -s "$file2" && echo -e "Файл "$file2" существует.\n" || { echo -e "Отсутствует файл "$file2".\n" && retval=2; }
+
+	_command test -d "$file3" | head -n 1
+	test -s "$file3" && echo -e "Каталог "$file3" существует.\n" || { echo -e "Отсутствует каталог "$file3".\n" && retval=2; }
+
+	_command test -d "$file4" | head -n 1
+	test -s "$file4" && echo -e "Каталог "$file4" существует.\n" || { echo -e "Отсутствует каталог "$file4".\n" && retval=2; }
+
+	_command test -d "$file5" | head -n 1
+	test -s "$file5" && echo -e "Каталог "$file5" существует.\n" || { echo -e "Отсутствует каталог "$file5".\n" && retval=2; }
+
+	return $retval
 }
+
 
 # Проверка полного доменного имени хоста (FQDN), нужно пересмотреть данный тест
 test_hostname(){
