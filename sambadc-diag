@@ -30,12 +30,12 @@ $PROG - утилита для диагностики состояния конт
 Формат вызова: $PROG [options] [<diagnostic-task>]
 
 Опции:
--l, --list<----><------>Список диагностических задач
--V, --version<-><------>Вывод версии утилиты
--v, --verbose<-><------>Подробный вывод
--h, --help<----><------>Показать данную справку и выйти
--w, --logfile[=FILE]<-->Вывести подробный вывод в файл
--f, --force<---><------>Принудительная запись вывода в существующий файл
+-l, --list		Список диагностических задач
+-V, --version		Вывод версии утилиты
+-v, --verbose		Подробный вывод
+-h, --help		Показать данную справку и выйти
+-w, --logfile[=FILE]	Вывести подробный вывод в файл
+-f, --force		Принудительная запись вывода в существующий файл
 EOF
     exit
 }
@@ -402,7 +402,7 @@ fsmo_dc_check(){
 	_command samba-tool fsmo show 2> /dev/null | head -n 1
 
 	error=$(samba-tool fsmo show 2>&1)
-	echo $error | grep -q "samba-tool: команда не найдена" && { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; } || echo "$(samba-tool fsmo show)"
+	echo $error | grep -q "samba-tool: команда не найдена" && { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; } || echo -e "\n$(samba-tool fsmo show | awk '{print $1}')"
 	echo
 
 	#echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
