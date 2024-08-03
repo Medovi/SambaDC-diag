@@ -545,4 +545,33 @@ init_log(){
 	fi
 }
 
+if ! test -z $listcmd; then
+	runcmd=list_run
+elif ! test -z "$customcmd"; then
+	runcmd=custom_run
+	global_retval=127
+else
+	runcmd=default_run
+fi
+
+if test -z $listcmd; then
+	init_log
+	print_head
+fi
+
+$runcmd is_not_empty_sysvol "Check empty syslog catalog"
+$runcmd samba_version "Checking the latest installed version of Samba"
+$runcmd admx_version "Checking for the installed admx-basealt package"
+$runcmd presence_files_and_dirs_samba "Checking for the existence of Samba service directories and configuration files"
+$runcmd test_hostname "Checking the full domain name of the host (FQDN)"
+$runcmd samba_service_status "Checking the status of the Samba service"
+$runcmd other_services_status "Checking the status of smbd and winbindd services"
+$runcmd samba_dbcheck "Checking the status of SambaAD databases"
+$runcmd ntp_status "Checking time synchronization (active NTP service)"
+$runcmd fsmo_dc_check "Check fsmo-roles"
+$runcmd presence_files_and_dirs_dns "Check files and dirs dns"
+$runcmd open_ports "Checking open ports"
+$runcmd dns_forward_check "Checking the operation of recursive DNS queries"
+$runcmd check_nameserver "Checking for the presence of the nameserver string in the configuration file "/etc/resolv.conf""
+
 exit "$global_retval"
