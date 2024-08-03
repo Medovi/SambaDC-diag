@@ -88,14 +88,42 @@ task_show(){
     echo "$func"
 }
 
-__command_msg()
-{
+__command_msg(){
     local p='$'
     if test "$1" = '-r'; then
         shift
         p='#'
     fi
     color_message "$p $*" bold
+}
+
+__header(){
+    color_message "===============================================================================" bold white
+}
+
+__footer(){
+    color_message "===============================================================================" bold white
+}
+
+__delimiter(){
+    echo "-------------------------------------------------------------------------------"
+}
+
+__check_title(){
+    color_message "$1" bold white
+}
+
+__newline(){
+    echo
+}
+
+__short_msg(){
+    case "$1" in
+        0) msg_done  "$2" ;;
+        2) msg_warn  "$2" ;;
+        102) msg_non_root  "$2" ;;
+        *) msg_fail "$2" ;;
+    esac
 }
 
 # Функция, определяющая наличие задач в списке и возвращающая код ошибки в случае выполнения или невыполнения задачи
