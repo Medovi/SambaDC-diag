@@ -49,7 +49,7 @@ while :; do
 	-V|--version) print_version "$PROG" ;;
 	-v|--verbose) verbose=1 ;;
 	-h|--help) show_usage ;;
-	-w|--logfile) shift; test -n "$1" && logfile="$1" || logfile="diag-domain-client.log" ;;
+	-w|--logfile) shift; test -n "$1" && logfile="$1" || logfile="sambadc-diag.log" ;;
 	-f|--force) force=1 ;;
 	--) shift; break ;;
 	*) fatal "Unrecognized option: $1" ;;
