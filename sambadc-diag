@@ -2,12 +2,18 @@
 
 set -euo pipefail
 
+. shell-terminfo
 . shell-getopt
 
-PROG="${0##*/}"
-PROG_VERSION="0.0.1"
+terminfo_init
 
-cmd="run"
+PROG="sambadc-diag"
+VERSION=0.2.8
+verbose=
+listcmd=
+runcmd=run
+logfile=/dev/null
+force=
 global_retval=0
 
 print_version(){
@@ -24,25 +30,31 @@ $PROG - утилита для диагностики состояния конт
 Формат вызова: $PROG [options] [<diagnostic-task>]
 
 Опции:
--l, --list		Список диагностических задач
--v, --version		Вывод версии утилиты
--h, --help		Показать данную справку и выйти
+-l, --list<----><------>Список диагностических задач
+-V, --version<-><------>Вывод версии утилиты
+-v, --verbose<-><------>Подробный вывод
+-h, --help<----><------>Показать данную справку и выйти
+-w, --logfile[=FILE]<-->Вывести подробный вывод в файл
+-f, --force<---><------>Принудительная запись вывода в существующий файл
 EOF
     exit
 }
 
-TEMP=$(getopt -n "$PROG" -o "l,v,r,h", -l "list,version,report,help" -- "$@") || show_usage
+TEMP=$(getopt -n "$PROG" -o "l,V,v,h,w::,f" -l "list,version,verbose,help,logfile::,force" -- "$@") || show_usage
 eval set -- "$TEMP"
 
-while true; do
+while :; do
     case "$1" in
-	-l|--list) cmd="list"; shift ;;
-	-v|--version) print_version; shift ;;
-	-r|--report) shift; ;;
-	-h|--help) show_usage; shift ;;
+	-l|--list) listcmd=1 ;;
+	-V|--version) print_version "$PROG" ;;
+	-v|--verbose) verbose=1 ;;
+	-h|--help) show_usage ;;
+	-w|--logfile) shift; test -n "$1" && logfile="$1" || logfile="diag-domain-client.log" ;;
+	-f|--force) force=1 ;;
 	--) shift; break ;;
-	*) fatal "Неверное значение: $1" ;;
+	*) fatal "Unrecognized option: $1" ;;
     esac
+    shift
 done
 
 task_list="$*"
