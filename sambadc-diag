@@ -467,11 +467,16 @@ open_ports(){
 	return $retval
 }
 
-
 # Проверка работы рекурсивных днс-запросов (валидность ip-адреса в smb.conf)
 dns_forward_check(){
-    validate_ipv4="^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$"
-    [[ "$(grep "dns forwarder =" /etc/samba/smb.conf | awk '{print $4}')" =~ $validate_ipv4 ]]
+	local retval=0
+
+	echo -e "Проверка рекурсивных DNS-запросов:\n"
+	validate_ipv4="^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$"
+	[[ "$(grep "dns forwarder =" /etc/samba/smb.conf | awk '{print $4}')" =~ $validate_ipv4 ]] && echo -e "В файле "/etc/samba/smb.conf" определён адрес:\n$(grep "dns forwarder =" /etc/samba/smb.conf)." || { echo "В файле "/etc/samba/smb.conf" не определены адреса." && retval=2; }
+	echo
+
+	return $retval
 }
 
 # Проверка на то, есть ли строка nameserver 127.0.0.1 или nameserver <адрес_интерфейса>
