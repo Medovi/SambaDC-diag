@@ -269,18 +269,22 @@ admx_version(){
 	return $retval
 }
 
-
 # Информация о версии самбы
 samba_version(){
+	retval=0
+
 	packet_name="samba"
 	policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
 	local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
 
 	if [ -z "$installed_version" ]; then
-		echo "Пакет "$packet_name" не установлен в системе"
+		echo -e "Пакет "$packet_name" не установлен в системе.\n"
+		retval=2
 	else
-		echo "Установлена следующая версия пакета "$packet_name": "$installed_version""
+		echo -e "Установлена следующая версия пакета "$packet_name": "$installed_version".\n"
 	fi
+
+	return $retval
 }
 
 # Проверка: существуют ли служебные каталоги и конфигурационные файлы самбы?
