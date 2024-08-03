@@ -216,12 +216,23 @@ run(){
     return $retval
 }
 
-#Проверка прав доступа к каталогу sysvol (без использования samba-tools)
-permissions_sysvol(){
-    # Прав доступа к каталогам не будет у обычного пользователя, но должны быть у рута
-    local path="/var/lib/samba/sysvol"
-    test -r "$path" && test -w "$path" && test -x "$path"
+# Проврека на то, что каталог sysvol не пустой
+is_not_empty_sysvol(){
+	# От рута проблем нет
+	local retval=0
+	local command="ls -A "/var/lib/samba/sysvol""
+
+	if [ -n "$(ls -A "/var/lib/samba/sysvol")" ]; then
+		_command $command
+	else
+		_command $command | head -n 1
+		echo -e "\nКаталог sysvol пустой.\n"
+		retval=2
+	fi
+	
+	return $retval
 }
+
 
 # Проврека на то, что каталог sysvol не пустой
 is_not_empty_sysvol(){
