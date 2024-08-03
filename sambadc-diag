@@ -57,7 +57,31 @@ while :; do
     shift
 done
 
-task_list="$*"
+customcmd="$*"
+
+#msg_non_root(){
+#    echo -n "$*: ["
+#    color_text "SKIP" blue
+#    echo "]"
+#}
+
+msg_fail(){
+    echo -n "$*: ["
+    color_text "FAIL" red
+    echo "]"
+}
+
+msg_warn(){
+    echo -n "$*: ["
+    color_text "WARN" yellow
+    echo "]"
+}
+
+msg_done(){
+    echo -n "$*: ["
+    color_text "DONE" green
+    echo "]"
+}
 
 task_show(){
     local func="$1"
