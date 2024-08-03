@@ -573,5 +573,8 @@ $runcmd presence_files_and_dirs_dns "Check files and dirs dns"
 $runcmd open_ports "Checking open ports"
 $runcmd dns_forward_check "Checking the operation of recursive DNS queries"
 $runcmd check_nameserver "Checking for the presence of the nameserver string in the configuration file "/etc/resolv.conf""
+$runcmd check_kerberos "Checking the health of Kerberos and LDAP"
+
+test -f "$logfile" && test -w "$logfile" && sed -i 's/\x1b\[[0-9;]*[mGKH]//g' $logfile
 
 exit "$global_retval"
