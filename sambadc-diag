@@ -193,30 +193,27 @@ _command(){
     return $retval
 }
 
-# Функция, определяющая наличие задач в списке и возвращающая код ошибки в случае выполнения или невыполнения задачи
-task_run(){
+run(){
     local retval=126
     local func="$1"
+    local msg
+    msg=$(printf "| %s |" "$func")
 
-    if test -n "$task_list"; then
-	echo "$task_list" | tr ' ' '\n' | grep -q "^$func\$" || return 0
-    fi
+    __header | __log
 
-    $func && retval=0 || retval="$?"
-    test $retval=0 || global_retval=1
+    __check_title "$msg" | __log
+    __delimiter | __log
+    __newline | __log
 
+    $func 2>&1 | __log && retval=0 || retval=$?
+
+    __delimiter | __log
+
+    __short_msg $retval "$2" | __log_force_print
+
+    __footer | __log
+    __newline | __log
     return $retval
-}
-
-task(){
-    local task="$1"
-    
-    case "$cmd" in
-	list) task_show "$task" ;;
-	report) ;;
-	run) task_run "$task" && echo "[DONE]: $task" || echo "[FAIL]: $task" ;;
-	*) fatal "Неверное значение: $cmd" ;;
-    esac
 }
 
 #Проверка прав доступа к каталогу sysvol (без использования samba-tools)
