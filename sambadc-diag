@@ -376,7 +376,8 @@ samba_dbcheck(){
 	local retval=0
 
 	_command samba-tool dbcheck 2> /dev/null | head -n 1
-	echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)" || { echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (\+[[:digit:]]\+ errors)" && retval=1; } ||
+	echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)" || { echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (\+[[:digit:]]\+ errors)" && retval=1; } || { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; }
+
 	echo
 
 	return $retval
@@ -395,9 +396,18 @@ ntp_status(){
 
 # Проверка fsmo-ролей контроллера домена
 fsmo_dc_check(){
-    echo "У контроллера домена следующие fsmo-роли:"
-    samba-tool fsmo show 2> /dev/null | awk '{print $1}'
-    #echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
+	local retval=0
+	local error=
+	echo "У контроллера домена следующие fsmo-роли:"
+	_command samba-tool fsmo show 2> /dev/null | head -n 1
+
+	error=$(samba-tool fsmo show 2>&1)
+	echo $error | grep -q "samba-tool: команда не найдена" && { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; } || echo "$(samba-tool fsmo show)"
+	echo
+
+	#echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
+
+	return $retval
 }
 
 # Проверка на наличие конфигурационных файлов DNS
