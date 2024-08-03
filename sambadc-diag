@@ -314,12 +314,17 @@ presence_files_and_dirs_samba(){
 	return $retval
 }
 
-
 # Проверка полного доменного имени хоста (FQDN), нужно пересмотреть данный тест
 test_hostname(){
-    local host="$(hostname -f)"
-    
-    [[ "$host" == *.* ]] && [[ "$host" != $.* ]] && [[ "$(host "$host" 2> /dev/null)" ]]
+	local retval=0
+	local host="$(hostname -f)"
+
+	echo "Полное доменное имя хоста (FQDN):"
+	echo -e ""$host"\n"
+
+	{ [[ "$host" == *.* ]] && [[ "$host" != $.* ]] && [[ "$(host "$host")" ]]; } || retval=2
+
+	return $retval
 }
 
 # Проверка состояния службы Samba
