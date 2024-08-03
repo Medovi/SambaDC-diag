@@ -340,11 +340,34 @@ samba_service_status(){
 	return $retval
 }
 
-
 # Проверка состояния служб smbd и winbindd (в случае чего можно ещё добавить службы)
 other_services_status(){
-    systemctl status smbd.service 2> /dev/null | grep "Active: active (running)" > /dev/null &&
-    systemctl status winbindd.service 2> /dev/null | grep "Active: active (running)" > /dev/null
+	local retval=-1
+	local retvals=()
+
+	local service1="smbd.service"
+	local service2="winbindd.service"
+
+	_command systemctl status "$service1" 2> /dev/null | head -n 1
+	echo "$(systemctl status "$service1" 2> /dev/null)" | grep "Active: active (running)" && retvals[0]=0 || { echo "$(systemctl status "$service1" 2> /dev/null)" | grep "Active: inactive (dead)" && retvals[0]=2; } || { echo "Ошибка: возможно служба отсутствует." && retvals[0]=1; }
+	echo
+
+	_command systemctl status "$service2" 2> /dev/null | head -n 1
+	echo "$(systemctl status "$service2" 2> /dev/null)" | grep "Active: active (running)" && retvals[1]=0 || { echo "$(systemctl status "$service2" 2> /dev/null)" | grep "Active: inactive (dead)" && retvals[1]=2; } || { echo "Ошибка: возможно служба отсутствует." && retvals[1]=1; }
+	echo
+
+	for val in "${retvals[@]}"; do
+		if [[ $val -eq 1 ]]; then
+			retval=1
+			break
+		elif [[ $val -eq 2 ]] && [[ $retval -ne 1 ]]; then
+			retval=2
+		elif [[ $val -eq 0 ]] && [[ $retval -ne 1 ]] && [[ $retval -ne 2 ]]; then
+			retval=0
+		fi
+	done
+
+	return $retval
 }
 
 # Проверка состояния базы SambaAD
