@@ -434,31 +434,39 @@ presence_files_and_dirs_dns(){
 
 # Проверка открытых (прослушиваемых) портов
 open_ports(){
-    local ports=(
-	53
-	88
-	123
-	135
-	137
-	138
-	139
-	389
-	445
-	464
-	636
-	3268
-	3269
-	# Возможно эти порты необязательны
-	#$(seq 49152 65535)
-    )
+	local retval=0
 
-    for port in "${ports[@]}"; do
-	if ! ss -tuln | grep -q ":$port\s"; then
-	    return 1
-	fi
-    done
+	local ports=(
+		53
+		88
+		123
+		135
+		137
+		138
+		139
+		389
+		445
+		464
+		636
+		3268
+		3269
+		# Возможно эти порты необязательны
+		#$(seq 49152 65535)
+	)
 
+	echo -e "Проверка портов ${ports[@]}:\n"
+
+	for port in "${ports[@]}"; do
+		if ! ss -tuln | grep -q ":$port\s"; then
+			echo "Порт $port - закрыт."
+			retval=2
+		fi
+	done
+	echo
+
+	return $retval
 }
+
 
 # Проверка работы рекурсивных днс-запросов (валидность ip-адреса в smb.conf)
 dns_forward_check(){
