@@ -373,7 +373,13 @@ other_services_status(){
 # Проверка состояния базы SambaAD
 samba_dbcheck(){
 # Только от рута
-    samba-tool dbcheck 2> /dev/null | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)"
+	local retval=0
+
+	_command samba-tool dbcheck 2> /dev/null | head -n 1
+	echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)" || { echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (\+[[:digit:]]\+ errors)" && retval=1; } ||
+	echo
+
+	return $retval
 }
 
 # Проверка синхронизации времени (активности сервиса NTP)
