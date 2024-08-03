@@ -126,6 +126,15 @@ __short_msg(){
     esac
 }
 
+__log(){
+    test -z $verbose && tee -a "$logfile" 1>/dev/null 2>&1 ||
+        tee -a "$logfile"
+}
+
+__log_force_print(){
+    tee -a "$logfile"
+}
+
 # Функция, определяющая наличие задач в списке и возвращающая код ошибки в случае выполнения или невыполнения задачи
 task_run(){
     local retval=126
