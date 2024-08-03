@@ -384,7 +384,13 @@ samba_dbcheck(){
 
 # Проверка синхронизации времени (активности сервиса NTP)
 ntp_status(){
-    timedatectl 2> /dev/null | grep -q "NTP service: active" > /dev/null
+	local retval=0
+
+	_command timedatectl
+
+	timedatectl | grep -q "NTP service: active" || retval=2
+
+	return $retval
 }
 
 # Проверка fsmo-ролей контроллера домена
