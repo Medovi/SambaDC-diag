@@ -329,8 +329,17 @@ test_hostname(){
 
 # Проверка состояния службы Samba
 samba_service_status(){
-    systemctl status samba.service 2> /dev/null | grep "Active: active (running)" > /dev/null
+	local retval=0
+	local service="samba.service"
+
+	_command systemctl status "$service" 2> /dev/null | head -n 1
+	echo "$(systemctl status "$service" 2> /dev/null)" | grep "Active: active (running)" || { echo "$(systemctl status "$service" 2> /dev/null)" | grep "Active: inactive (dead)" && retval=2; } || { echo "Ошибка: возможно служба отсутствует." && retval=1; }
+
+	echo
+
+	return $retval
 }
+
 
 # Проверка состояния служб smbd и winbindd (в случае чего можно ещё добавить службы)
 other_services_status(){
