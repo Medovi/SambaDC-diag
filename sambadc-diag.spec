@@ -16,20 +16,23 @@ Domain Controller Diagnostic Tool.
 %prep
 %setup
 
-%install
-mkdir -p %buildroot%_libexecdir/%name
-mkdir -p %buildroot%_sysconfdir/alterator/backends
-mkdir -p %buildroot%_datadir/alterator/diagnostictools/sambadc-diag/%name
+%build
+sed -i 's/^VERSION=.*/VERSION=%version/' %name
 
-install -v -p -m 755 -D sambadc-diag %buildroot%_libexecdir/%name
-install -v -p -m 755 -D sambadc-diag.backend %buildroot%_sysconfdir/alterator/backends
-install -v -p -m 755 -D sambadc-diag.diagnostictool %buildroot%_datadir/alterator/diagnostictools/sambadc-diag/%name
+%install
+mkdir -p %buildroot%_alterator_datadir/diagnostictools/%name
+
+install -p -D -m755 sambadc-diag %buildroot%_bindir/%name
+install -p -D -m644 sambadc-diag.backend %buildroot%_alterator_datadir/backends/%name.backend
+install -p -D -m644 sambadc-diag.diagnostictool %buildroot%_alterator_datadir/diagnostictools/%name/%name.diagnostictool
 
 %files
-%_libexecdir/%name/sambadc-diag
-%_sysconfdir/alterator/backends/sambadc-diag.backend
-%_datadir/alterator/objects/%name/sambadc-diag.diagnostictool
+%_bindir/%name
+%_alterator_datadir/backends/%name.backend
+%_alterator_datadir/diagnostictools/%name/%name.diagnostictool
+
 %changelog
 * Sun Jul 28 2024 Sergey Savelev <savelevsa@basealt.ru> 0.0.1-alt1
 - initial build
+
 
