@@ -233,14 +233,6 @@ is_not_empty_sysvol(){
 	return $retval
 }
 
-
-# Проврека на то, что каталог sysvol не пустой
-is_not_empty_sysvol(){
-    # От рута проблем нет
-    [ "$(ls -a "/var/lib/samba/sysvol" 2> /dev/null)" ]
-	
-}
-
 # Информация о версии admx-basealt
 admx_version(){
 	#rpm -q admx-basealt | grep -q '^admx-basealt-\+[[:digit:]\+\.[:digit:]\+\.[:digit:]\+\.[:digit:]]\+-alt1.noarch'
@@ -261,16 +253,22 @@ admx_version(){
 	#else
 		#[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
 	#fi
+	local retval=0
+
 	packet_name="admx-basealt"
 	policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
 	local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
 
 	if [ -z "$installed_version" ]; then
-		echo "Пакет "$packet_name" не установлен в системе"
+		echo -e "Пакет "$packet_name" не установлен в системе.\n"
+		retval=2
 	else
-		echo "Установлена следующая версия пакета "$packet_name": "$installed_version""
+		echo -e "Установлена следующая версия пакета "$packet_name": "$installed_version".\n"
 	fi
+
+	return $retval
 }
+
 
 # Информация о версии самбы
 samba_version(){
