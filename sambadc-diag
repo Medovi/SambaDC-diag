@@ -412,9 +412,24 @@ fsmo_dc_check(){
 
 # Проверка на наличие конфигурационных файлов DNS
 presence_files_and_dirs_dns(){
-    # Сначала нужно определить какой установлен внутренний DNS-сервер, а после уже выполнять тест
-    # в зависимости от определённого DNS-сервера (SAMBA_INTERNAL, BIND9_FLATLINE, BIND9_DLZ, NONE)
-    test -s /etc/resolv.conf && test -s /etc/bind/options.conf && test -s /etc/bind/resolvconf-options.conf
+	local retval=0
+
+	# Сначала нужно определить какой установлен внутренний DNS-сервер, а после уже выполнять тест
+	# в зависимости от определённого DNS-сервера (SAMBA_INTERNAL, BIND9_FLATLINE, BIND9_DLZ, NONE)
+	local file1="/etc/resolv.conf"
+	local file2="/etc/bind/options.conf"
+	local file3="/etc/bind/resolvconf-options.conf"
+
+	_command test -s "$file1" | head -n 1
+	test -s "$file1" && echo -e "Файл "$file1" существует.\n" || { echo -e "Отсутствует файл "$file1".\n" && retval=2; }
+
+	_command test -s "$file2" | head -n 1
+	test -s "$file2" && echo -e "Файл "$file2" существует.\n" || { echo -e "Отсутствует файл "$file2".\n" && retval=2; }
+
+	_command test -s "$file3" | head -n 1
+	test -s "$file3" && echo -e "Файл "$file3" существует.\n" || { echo -e "Отсутствует файл "$file3".\n" && retval=2; }
+
+	return $retval
 }
 
 # Проверка открытых (прослушиваемых) портов
