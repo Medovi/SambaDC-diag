@@ -501,10 +501,18 @@ check_nameserver(){
 
 # Проверка работоспособности Kerberos и ldap (должны иметься SRV записи)
 check_kerberos(){
-    host -t srv _kerberos._udp."$(hostname -d)" | grep -q "has SRV record 0 100 88" &&
-    host -t srv _ldap._tcp."$(hostname -d)" | grep -q "has SRV record 0 100 389"
-    # Ещё нужна проверка <имя_хоста>.<доменное_имя>, но здесь всегда показывает, что нет записей SRV
-    # Возможно также нужна проверка klist, убедиться, что билет был получен, но скорее всего это лишнее
+	local retval=0
+
+	test -n "$(hostname -d)" || retval=1
+	_command host -t srv _kerberos._udp."$(hostname -d)" | head -n 1
+	_command host -t srv _kerberos._udp."$(hostname -d)" | grep "has SRV record 0 100 88" || retval=1
+	echo
+
+	_command host -t srv _ldap._tcp."$(hostname -d)" | head -n 1
+	_command host -t srv _ldap._tcp."$(hostname -d)" | grep "has SRV record 0 100 389" || retval=1
+	echo
+
+	return $retval
 }
 
 #task permissions_sysvol
