@@ -10,14 +10,6 @@ Comment[en_EN] = The tool is designed to diagnose the status of a domain control
 Icon = system-run
 ReportSuffix = txt
 
-[permissions_sysvol]
-DisplayName = permissions_sysvol
-DisplayName[ru_RU] = Проверка прав доступа к каталогу Sysvol
-DisplayName[en_EN] = Checking access rights to the Sysvol directory
-Comment = Checking access rights to the Sysvol directory
-Comment[ru_RU] = Проверка прав доступа к каталогу Sysvol
-Comment[en_EN] = Checking access rights to the Sysvol directory
-
 [is_not_empty_sysvol]
 DisplayName = is_not_empty_sysvol
 DisplayName[ru_RU] = Проверка размера каталога sysvol
@@ -25,6 +17,14 @@ DisplayName[en_EN] = check empty syslog catalog
 Comment = check empty syslog catalog
 Comment[ru_RU] = Проверка размера каталога sysvol
 Comment[en_EN] = check empty syslog catalog
+
+[samba_version]
+DisplayName = samba_version
+DisplayName[ru_RU] = Проверка последней установленной версии Samba
+DisplayName[en_EN] = Checking the latest installed version of Samba
+Comment = Checking the latest installed version of Samba
+Comment[ru_RU] = Проверка последней установленной версии Samba
+Comment[en_EN] = Checking the latest installed version of Samba
 
 [admx_version]
 DisplayName = admx_version
@@ -41,14 +41,6 @@ DisplayName[en_EN] = Checking for the existence of Samba service directories and
 Comment = Checking for the existence of Samba service directories and configuration files
 Comment[ru_RU] = Проверка на существование служебных каталогов и конфигурационных файлов Samba
 Comment[en_EN] = Checking for the existence of Samba service directories and configuration files
-
-[samba_version]
-DisplayName = samba_version
-DisplayName[ru_RU] = Проверка последней установленной версии Samba
-DisplayName[en_EN] = Checking the latest installed version of Samba
-Comment = Checking the latest installed version of Samba
-Comment[ru_RU] = Проверка последней установленной версии Samba
-Comment[en_EN] = Checking the latest installed version of Samba
 
 [test_hostname]
 DisplayName = test_hostname
@@ -89,6 +81,22 @@ DisplayName[en_EN] = Checking time synchronization (active NTP service)
 Comment = Checking time synchronization (active NTP service)
 Comment[ru_RU] = Проверка синхронизации времени (активного сервиса NTP)
 Comment[en_EN] = Checking time synchronization (active NTP service)
+
+[fsmo_dc_check]
+DisplayName = fsmo_dc_check
+DisplayName[ru_RU] = Информация о FSMO-ролях контроллера домена
+DisplayName[en_EN] = Information about the FSMO roles of the domain controller
+Comment = Information about the FSMO roles of the domain controller
+Comment[ru_RU] = Информация о FSMO-ролях контроллера домена
+Comment[en_EN] = Information about the FSMO roles of the domain controller
+
+[presence_files_and_dirs_dns]
+DisplayName = presence_files_and_dirs_dns
+DisplayName[ru_RU] = Проверка на наличие конфигурационных файлов DNS
+DisplayName[en_EN] = Checking for DNS configuration files
+Comment = Checking for DNS configuration files
+Comment[ru_RU] = Проверка на наличие конфигурационных файлов DNS
+Comment[en_EN] = Checking for DNS configuration files
 
 [open_ports]
 DisplayName = open_ports

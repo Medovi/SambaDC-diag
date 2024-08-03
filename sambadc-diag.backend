@@ -2,7 +2,7 @@
 Type = Backend
 Module = executor
 Interface = diag1
-Name = sambadc-diag
+Name = sambadc_diag
 thread_limit = 200000
 
 [Info]
