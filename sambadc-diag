@@ -149,6 +149,24 @@ print_head(){
     __newline | __log
 }
 
+is_root(){
+    if test "$(id -u)" != 0; then
+        return 1
+    fi
+    return 0
+}
+
+__not_root_skip(){
+    local msg=
+    if test -n "${1+x}" && test "$1" = "-m"; then
+        shift
+        msg="$1"
+    fi
+    echo -n "Running not by root, SKIP: $msg"
+    echo
+    echo
+}
+
 # Функция, определяющая наличие задач в списке и возвращающая код ошибки в случае выполнения или невыполнения задачи
 task_run(){
     local retval=126
