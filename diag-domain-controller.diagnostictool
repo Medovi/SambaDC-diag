@@ -92,10 +92,10 @@ Comment[en_EN] = Information about the FSMO roles of the domain controller
 
 [presence_files_and_dirs_dns]
 DisplayName = presence_files_and_dirs_dns
-DisplayName[ru_RU] = Проверка на наличие конфигурационных файлов DNS
+DisplayName[ru_RU] = Проверка наличия конфигурационных файлов DNS
 DisplayName[en_EN] = Checking for DNS configuration files
 Comment = Checking for DNS configuration files
-Comment[ru_RU] = Проверка на наличие конфигурационных файлов DNS
+Comment[ru_RU] = Проверка наличия конфигурационных файлов DNS
 Comment[en_EN] = Checking for DNS configuration files
 
 [open_ports]
