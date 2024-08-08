@@ -25,17 +25,17 @@ EOF
 
 show_usage(){
     cat <<EOF
-$PROG - утилита для диагностики состояния контроллера домена
+$PROG - инструмент диагностики состояния контроллера домена
 
 Формат вызова: $PROG [options] [<diagnostic-task>]
 
 Опции:
--l, --list		Список диагностических задач
--V, --version		Вывод версии утилиты
--v, --verbose		Подробный вывод
--h, --help		Показать данную справку и выйти
--w, --logfile[=FILE]	Вывести подробный вывод в файл
--f, --force		Принудительная запись вывода в существующий файл
+-l, --list			Список диагностических задач
+-V, --version			Вывод версии утилиты
+-v, --verbose			Подробный вывод
+-h, --help			Показать данную справку и выйти
+-w, --logfile[=FILE]		Вывести подробный вывод в файл
+-f, --force			Принудительная запись вывода в существующий файл
 EOF
     exit
 }
@@ -216,351 +216,335 @@ run(){
     return $retval
 }
 
-# Проврека на то, что каталог sysvol не пустой
+# Проврека размера каталога sysvol
 is_not_empty_sysvol(){
-	# От рута проблем нет
-	local retval=0
-	local command="ls -A "/var/lib/samba/sysvol""
+    # От рута проблем нет
+    local retval=0
+    local command="ls -A "/var/lib/samba/sysvol""
 
-	if [ -n "$(ls -A "/var/lib/samba/sysvol")" ]; then
-		_command $command
-	else
-		_command $command | head -n 1
-		echo -e "\nКаталог sysvol пустой.\n"
-		retval=2
-	fi
-	
-	return $retval
+    if [ -n "$(ls -A "/var/lib/samba/sysvol")" ]; then
+	_command $command
+    else
+	_command $command | head -n 1
+	echo -e "\nКаталог sysvol пустой.\n"
+	retval=2
+    fi
+
+    return $retval
 }
 
-# Информация о версии admx-basealt
+# Проверка наличия пакета admx-basealt и информация о его установленной версии
 admx_version(){
-	#rpm -q admx-basealt | grep -q '^admx-basealt-\+[[:digit:]\+\.[:digit:]\+\.[:digit:]\+\.[:digit:]]\+-alt1.noarch'
+    local retval=0
+    local packet_name="admx-basealt"
+    local policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
+    local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
 
-	# тест следует выполнять, выполнив перед этип apt-get update (обновление баз пакетов)
-	# но apt-get update следует запускать от рута, поэтому при запуске от рута проблем с тестом не будет
-	#apt-get update > /dev/null
-	#policy_output="$(apt-cache policy admx-basealt 2> /dev/null)"
-	#installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
-	#candidate_version="$(echo "$policy_output" | grep "Кандидат:" | awk '{print $2}')"
+    if [ -z "$installed_version" ]; then
+	echo -e "Пакет "$packet_name" не установлен в системе.\n"
+	retval=2
+    else
+	echo -e "Версия установленного пакета "$packet_name": "$installed_version".\n"
+    fi
 
-	#if [ -z "$installed_version" ] || [ -z "$candidate_version" ]; then
-		#return 1
-	#fi
-
-	#if [ "$installed_version" == "$candidate_version" ]; then
-		#return 0
-	#else
-		#[ "$(echo -e "$installed_version\n$candidate_version" | sort -V | head -n1)" != "$installed_version" ]
-	#fi
-	local retval=0
-
-	packet_name="admx-basealt"
-	policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
-	local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
-
-	if [ -z "$installed_version" ]; then
-		echo -e "Пакет "$packet_name" не установлен в системе.\n"
-		retval=2
-	else
-		echo -e "Установлена следующая версия пакета "$packet_name": "$installed_version".\n"
-	fi
-
-	return $retval
+    return $retval
 }
 
-# Информация о версии самбы
+# Проверка наличия пакета samba и информация о его установленной версии
 samba_version(){
-	retval=0
+    local retval=0
+    local packet_name="samba"
+    local policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
+    local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
 
-	packet_name="samba"
-	policy_output="$(apt-cache policy "$packet_name" 2> /dev/null)"
-	local installed_version="$(echo "$policy_output" | grep "Установлен:" | awk '{print $2}')"
+    if [ -z "$installed_version" ]; then
+	echo -e "Пакет "$packet_name" не установлен в системе.\n"
+	retval=2
+    else
+	echo -e "Версия установленного пакета "$packet_name": "$installed_version".\n"
+    fi
 
-	if [ -z "$installed_version" ]; then
-		echo -e "Пакет "$packet_name" не установлен в системе.\n"
-		retval=2
-	else
-		echo -e "Установлена следующая версия пакета "$packet_name": "$installed_version".\n"
-	fi
-
-	return $retval
+    return $retval
 }
 
 # Проверка: существуют ли служебные каталоги и конфигурационные файлы самбы?
 presence_files_and_dirs_samba(){
-	local retval=0
-	local file1="/etc/resolvconf.conf"
-	local file2="/etc/samba/smb.conf"
-	local file3="/var/lib/samba"
-	local file4="/var/lib/samba/sysvol"
-	local file5="/var/cache/samba"
-	
-	_command test -s "$file1" | head -n 1
-	test -s "$file1" && echo -e "Файл "$file1" существует.\n" || { echo -e "Отсутствует файл "$file1".\n" && retval=2; }
+    local retval=0
+    local file1="/etc/resolvconf.conf"
+    local file2="/etc/samba/smb.conf"
+    local file3="/var/lib/samba"
+    local file4="/var/lib/samba/sysvol"
+    local file5="/var/cache/samba"
 
-	_command test -s "$file2" | head -n 1
-	test -s "$file2" && echo -e "Файл "$file2" существует.\n" || { echo -e "Отсутствует файл "$file2".\n" && retval=2; }
+    _command test -s "$file1" | head -n 1
+    test -s "$file1" && echo -e "Файл "$file1" существует.\n" || { echo -e "Отсутствует файл "$file1".\n" && retval=2; }
 
-	_command test -d "$file3" | head -n 1
-	test -s "$file3" && echo -e "Каталог "$file3" существует.\n" || { echo -e "Отсутствует каталог "$file3".\n" && retval=2; }
+    _command test -s "$file2" | head -n 1
+    test -s "$file2" && echo -e "Файл "$file2" существует.\n" || { echo -e "Отсутствует файл "$file2".\n" && retval=2; }
 
-	_command test -d "$file4" | head -n 1
-	test -s "$file4" && echo -e "Каталог "$file4" существует.\n" || { echo -e "Отсутствует каталог "$file4".\n" && retval=2; }
+    _command test -d "$file3" | head -n 1
+    test -s "$file3" && echo -e "Каталог "$file3" существует.\n" || { echo -e "Отсутствует каталог "$file3".\n" && retval=2; }
 
-	_command test -d "$file5" | head -n 1
-	test -s "$file5" && echo -e "Каталог "$file5" существует.\n" || { echo -e "Отсутствует каталог "$file5".\n" && retval=2; }
+    _command test -d "$file4" | head -n 1
+    test -s "$file4" && echo -e "Каталог "$file4" существует.\n" || { echo -e "Отсутствует каталог "$file4".\n" && retval=2; }
 
-	return $retval
+    _command test -d "$file5" | head -n 1
+    test -s "$file5" && echo -e "Каталог "$file5" существует.\n" || { echo -e "Отсутствует каталог "$file5".\n" && retval=2; }
+
+    return $retval
 }
 
 # Проверка полного доменного имени хоста (FQDN), нужно пересмотреть данный тест
 test_hostname(){
-	local retval=0
-	local host="$(hostname -f)"
+    local retval=0
+    local host="$(hostname -f)"
 
-	echo "Полное доменное имя хоста (FQDN):"
-	echo -e ""$host"\n"
+    echo "Полное доменное имя хоста (FQDN):"
+    echo -e ""$host"\n"
 
-	{ [[ "$host" == *.* ]] && [[ "$host" != $.* ]] && [[ "$(host "$host")" ]]; } || retval=2
+    { [[ "$host" == *.* ]] && [[ "$host" != $.* ]] && [[ "$(host "$host")" ]]; } || retval=2
 
-	return $retval
+    return $retval
 }
 
 # Проверка состояния службы Samba
 samba_service_status(){
-	local retval=0
-	local service="samba.service"
+    local retval=0
+    local service="samba.service"
 
-	_command systemctl status "$service" 2> /dev/null | head -n 1
-	echo "$(systemctl status "$service" 2> /dev/null)" | grep "Active: active (running)" || { echo "$(systemctl status "$service" 2> /dev/null)" | grep "Active: inactive (dead)" && retval=2; } || { echo "Ошибка: возможно служба отсутствует." && retval=1; }
+    _command systemctl status "$service" 2> /dev/null | head -n 1
+    echo "$(systemctl status "$service" 2> /dev/null)" | grep "Active: active (running)" ||
+    { echo "$(systemctl status "$service" 2> /dev/null)" | grep "Active: inactive (dead)" && retval=2; } ||
+    { echo "Ошибка: возможно служба отсутствует." && retval=1; }
+    echo
 
-	echo
-
-	return $retval
+    return $retval
 }
 
 # Проверка состояния служб smbd и winbindd (в случае чего можно ещё добавить службы)
 other_services_status(){
-	local retval=-1
-	local retvals=()
+    local retval=-1
+    local retvals=()
+    local service1="smbd.service"
+    local service2="winbindd.service"
 
-	local service1="smbd.service"
-	local service2="winbindd.service"
+    _command systemctl status "$service1" 2> /dev/null | head -n 1
+    echo "$(systemctl status "$service1" 2> /dev/null)" | grep "Active: active (running)" && retvals[0]=0 ||
+    { echo "$(systemctl status "$service1" 2> /dev/null)" | grep "Active: inactive (dead)" && retvals[0]=2; } ||
+    { echo "Ошибка: возможно служба отсутствует." && retvals[0]=1; }
+    echo
 
-	_command systemctl status "$service1" 2> /dev/null | head -n 1
-	echo "$(systemctl status "$service1" 2> /dev/null)" | grep "Active: active (running)" && retvals[0]=0 || { echo "$(systemctl status "$service1" 2> /dev/null)" | grep "Active: inactive (dead)" && retvals[0]=2; } || { echo "Ошибка: возможно служба отсутствует." && retvals[0]=1; }
-	echo
+    _command systemctl status "$service2" 2> /dev/null | head -n 1
+    echo "$(systemctl status "$service2" 2> /dev/null)" | grep "Active: active (running)" && retvals[1]=0 ||
+    { echo "$(systemctl status "$service2" 2> /dev/null)" | grep "Active: inactive (dead)" && retvals[1]=2; } ||
+    { echo "Ошибка: возможно служба отсутствует." && retvals[1]=1; }
+    echo
 
-	_command systemctl status "$service2" 2> /dev/null | head -n 1
-	echo "$(systemctl status "$service2" 2> /dev/null)" | grep "Active: active (running)" && retvals[1]=0 || { echo "$(systemctl status "$service2" 2> /dev/null)" | grep "Active: inactive (dead)" && retvals[1]=2; } || { echo "Ошибка: возможно служба отсутствует." && retvals[1]=1; }
-	echo
+    for val in "${retvals[@]}"; do
+	if [[ $val -eq 1 ]]; then
+	    retval=1
+	    break
+	elif [[ $val -eq 2 ]] && [[ $retval -ne 1 ]]; then
+	    retval=2
+	elif [[ $val -eq 0 ]] && [[ $retval -ne 1 ]] && [[ $retval -ne 2 ]]; then
+	    retval=0
+	fi
+    done
 
-	for val in "${retvals[@]}"; do
-		if [[ $val -eq 1 ]]; then
-			retval=1
-			break
-		elif [[ $val -eq 2 ]] && [[ $retval -ne 1 ]]; then
-			retval=2
-		elif [[ $val -eq 0 ]] && [[ $retval -ne 1 ]] && [[ $retval -ne 2 ]]; then
-			retval=0
-		fi
-	done
-
-	return $retval
+    return $retval
 }
 
 # Проверка состояния базы SambaAD
 samba_dbcheck(){
 # Только от рута
-	local retval=0
+    local retval=0
 
-	_command samba-tool dbcheck 2> /dev/null | head -n 1
-	echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)" || { echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (\+[[:digit:]]\+ errors)" && retval=1; } || { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; }
+    _command samba-tool dbcheck 2> /dev/null | head -n 1
+    echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (0 errors)" ||
+    { echo "$(samba-tool dbcheck 2> /dev/null)" | grep -q "Checked \+[[:digit:]]\+ objects (\+[[:digit:]]\+ errors)" && retval=1; } ||
+    { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; }
+    echo
 
-	echo
-
-	return $retval
+    return $retval
 }
 
 # Проверка синхронизации времени (активности сервиса NTP)
 ntp_status(){
-	local retval=0
+    local retval=0
 
-	_command timedatectl
+    _command timedatectl
 
-	timedatectl | grep -q "NTP service: active" || retval=2
+    timedatectl | grep -q "NTP service: active" || retval=2
 
-	return $retval
+    return $retval
 }
 
 # Проверка fsmo-ролей контроллера домена
 fsmo_dc_check(){
-	local retval=0
-	local error=
-	echo "У контроллера домена следующие fsmo-роли:"
-	_command samba-tool fsmo show 2> /dev/null | head -n 1
+    local retval=0
+    local error=
+    echo "У контроллера домена следующие fsmo-роли:"
+    _command samba-tool fsmo show 2> /dev/null | head -n 1
 
-	error=$(samba-tool fsmo show 2>&1)
-	echo $error | grep -q "samba-tool: команда не найдена" && { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; } || echo -e "\n$(samba-tool fsmo show | awk '{print $1}')"
-	echo
+    error=$(samba-tool fsmo show 2>&1)
+    #echo $error | grep -q "samba-tool: команда не найдена" && { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; } || echo -e "\n$(samba-tool fsmo show | awk '{print $1}')"
+    echo $error | grep -q "samba-tool: команда не найдена" && { echo "Ошибка: возможно пакет "samba-tool" не установлен." && retval=1; } || echo -e "\n$(samba-tool fsmo show)"
+    echo
 
-	#echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
+    #echo "\n" | samba-tool testparm -v 2> /dev/null | grep -q "server role = active directory domain controller"
 
-	return $retval
+    return $retval
 }
 
 # Проверка на наличие конфигурационных файлов DNS
 presence_files_and_dirs_dns(){
-	local retval=0
+    local retval=0
 
-	# Сначала нужно определить какой установлен внутренний DNS-сервер, а после уже выполнять тест
-	# в зависимости от определённого DNS-сервера (SAMBA_INTERNAL, BIND9_FLATLINE, BIND9_DLZ, NONE)
-	local file1="/etc/resolv.conf"
-	local file2="/etc/bind/options.conf"
-	local file3="/etc/bind/resolvconf-options.conf"
+    # Сначала нужно определить какой установлен внутренний DNS-сервер, а после уже выполнять тест
+    # в зависимости от определённого DNS-сервера (SAMBA_INTERNAL, BIND9_FLATLINE, BIND9_DLZ, NONE)
+    local file1="/etc/resolv.conf"
+    local file2="/etc/bind/options.conf"
+    local file3="/etc/bind/resolvconf-options.conf"
 
-	_command test -s "$file1" | head -n 1
-	test -s "$file1" && echo -e "Файл "$file1" существует.\n" || { echo -e "Отсутствует файл "$file1".\n" && retval=2; }
+    _command test -s "$file1" | head -n 1
+    test -s "$file1" && echo -e "Файл "$file1" существует.\n" || { echo -e "Отсутствует файл "$file1".\n" && retval=2; }
 
-	_command test -s "$file2" | head -n 1
-	test -s "$file2" && echo -e "Файл "$file2" существует.\n" || { echo -e "Отсутствует файл "$file2".\n" && retval=2; }
+    _command test -s "$file2" | head -n 1
+    test -s "$file2" && echo -e "Файл "$file2" существует.\n" || { echo -e "Отсутствует файл "$file2".\n" && retval=2; }
 
-	_command test -s "$file3" | head -n 1
-	test -s "$file3" && echo -e "Файл "$file3" существует.\n" || { echo -e "Отсутствует файл "$file3".\n" && retval=2; }
+    _command test -s "$file3" | head -n 1
+    test -s "$file3" && echo -e "Файл "$file3" существует.\n" || { echo -e "Отсутствует файл "$file3".\n" && retval=2; }
 
-	return $retval
+    return $retval
 }
 
 # Проверка открытых (прослушиваемых) портов
 open_ports(){
-	local retval=0
+    local retval=0
+    local ports=(
+	53
+	88
+	123
+	135
+	137
+	138
+	139
+	389
+	445
+	464
+	636
+	3268
+	3269
+	# Возможно эти порты необязательны
+	#$(seq 49152 65535)
+    )
 
-	local ports=(
-		53
-		88
-		123
-		135
-		137
-		138
-		139
-		389
-		445
-		464
-		636
-		3268
-		3269
-		# Возможно эти порты необязательны
-		#$(seq 49152 65535)
-	)
+    echo -e "Проверка портов ${ports[@]}:\n"
 
-	echo -e "Проверка портов ${ports[@]}:\n"
+    for port in "${ports[@]}"; do
+	if ! ss -tuln | grep -q ":$port\s"; then
+	    echo "Порт $port - закрыт."
+	    retval=2
+	else
+	    echo "Порт $port - открыт."
+	fi
+    done
+    echo
 
-	for port in "${ports[@]}"; do
-		if ! ss -tuln | grep -q ":$port\s"; then
-			echo "Порт $port - закрыт."
-			retval=2
-		fi
-	done
-	echo
-
-	return $retval
+    return $retval
 }
 
 # Проверка работы рекурсивных днс-запросов (валидность ip-адреса в smb.conf)
 dns_forward_check(){
-	local retval=0
+    local retval=0
 
-	echo -e "Проверка рекурсивных DNS-запросов:\n"
-	validate_ipv4="^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$"
-	[[ "$(grep "dns forwarder =" /etc/samba/smb.conf | awk '{print $4}')" =~ $validate_ipv4 ]] && echo -e "В файле "/etc/samba/smb.conf" определён адрес:\n$(grep "dns forwarder =" /etc/samba/smb.conf)." || { echo "В файле "/etc/samba/smb.conf" не определены адреса." && retval=2; }
-	echo
+    echo -e "Проверка рекурсивных DNS-запросов:\n"
+    validate_ipv4="^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$"
+    [[ "$(grep "dns forwarder =" /etc/samba/smb.conf | awk '{print $4}')" =~ $validate_ipv4 ]] && echo -e "В файле "/etc/samba/smb.conf" определён адрес:\n$(grep "dns forwarder =" /etc/samba/smb.conf)." ||
+    { echo "В файле "/etc/samba/smb.conf" не определены адреса." && retval=2; }
+    echo
 
-	return $retval
+    return $retval
 }
 
 # Проверка на то, есть ли строка nameserver 127.0.0.1 или nameserver <адрес_интерфейса>
 check_nameserver(){
-	local retval=0
-	#Тут проблема в том, что интерфейс может быть другим, поэтому тут ещё стоит подумать
-	#local interface="enp0s3"
-	#local ip_addr="$(ifconfig "$interface" | grep "inet addr:" | cut -d: -f2 | awk '{print $1}')"
-	local ip_addr="$(hostname -i)"
-	local nameservers="$(grep "nameserver " /etc/resolv.conf | awk '{print $2}')"
+    local retval=0
+    local ip_addr="$(hostname -i)"
+    local nameservers="$(grep "nameserver " /etc/resolv.conf | awk '{print $2}')"
 
-	if echo "$nameservers" | grep -q "^$ip_addr$" || echo "$nameservers" | grep -q "127.0.0.1"; then
-		echo -e "В конфигурационном файле "/etc/resolv.conf" имеется строка nameserver:\n$(grep "nameserver" /etc/resolv.conf)."
-	else
-		echo "В конфигурационном файле "/etc/resolv.conf" нет строки "nameserver" <ip_адрес_текущей_машины>"
-		retval=2
-	fi
-	echo
+    if echo "$nameservers" | grep -q "^$ip_addr$" || echo "$nameservers" | grep -q "127.0.0.1"; then
+	echo -e "В конфигурационном файле "/etc/resolv.conf" имеется строка nameserver:\n$(grep "nameserver" /etc/resolv.conf)."
+    else
+	echo "В конфигурационном файле "/etc/resolv.conf" нет строки "nameserver" <ip_адрес_текущей_машины>"
+	retval=2
+    fi
+    echo
 
-	return $retval
+    return $retval
 }
 
 # Проверка работоспособности Kerberos и ldap (должны иметься SRV записи)
 check_kerberos(){
-	local retval=0
+    local retval=0
 
-	test -n "$(hostname -d)" || retval=1
-	_command host -t srv _kerberos._udp."$(hostname -d)" | head -n 1
-	_command host -t srv _kerberos._udp."$(hostname -d)" | grep "has SRV record 0 100 88" || retval=1
-	echo
+    test -n "$(hostname -d)" || retval=1
+    _command host -t srv _kerberos._udp."$(hostname -d)" | head -n 1
+    _command host -t srv _kerberos._udp."$(hostname -d)" | grep "has SRV record 0 100 88" || retval=1
+    echo
 
-	_command host -t srv _ldap._tcp."$(hostname -d)" | head -n 1
-	_command host -t srv _ldap._tcp."$(hostname -d)" | grep "has SRV record 0 100 389" || retval=1
-	echo
+    _command host -t srv _ldap._tcp."$(hostname -d)" | head -n 1
+    _command host -t srv _ldap._tcp."$(hostname -d)" | grep "has SRV record 0 100 389" || retval=1
+    echo
 
-	return $retval
+    return $retval
 }
 
 default_run(){
-	local retval=0
-	run "$1" "$2" || retval=$?
-	test $retval = 1 && global_retval=1
-	return 0
+    local retval=0
+    run "$1" "$2" || retval=$?
+    test $retval = 1 && global_retval=1
+    return 0
 }
 
 list_run(){
-	test -z $verbose &&
-	echo "$1" ||
-	echo "$1: $2"
+    test -z $verbose && echo "$1" || echo "$1: $2"
 }
 
 custom_run(){
-	if echo "$customcmd"  | tr ' ' '\n' | grep -q "^$1\$"; then
+    if echo "$customcmd"  | tr ' ' '\n' | grep -q "^$1\$"; then
 	run "$1" "$2" && global_retval=0 || global_retval=$?
-	fi
+    fi
 }
 
 init_log(){
-	local log_index
-	if test -e "$logfile" && test "$logfile" != "/dev/null" && test -z "$force"; then
-		log_index="$(find . -maxdepth 1 -name "$logfile.*" 2>/dev/null | sort -V | tail -1 | sed -E 's/^.*\.([^.]*)$/\1/' || true)"
-		logfile="$logfile".$(($log_index + 1))
-	fi
-	if test "$logfile" != "/dev/null"; then
-		echo -n > "$logfile"
-	fi
+    local log_index
+    if test -e "$logfile" && test "$logfile" != "/dev/null" && test -z "$force"; then
+	log_index="$(find . -maxdepth 1 -name "$logfile.*" 2>/dev/null | sort -V | tail -1 | sed -E 's/^.*\.([^.]*)$/\1/' || true)"
+	logfile="$logfile".$(($log_index + 1))
+    fi
+    if test "$logfile" != "/dev/null"; then
+	echo -n > "$logfile"
+    fi
 }
 
 if ! test -z $listcmd; then
-	runcmd=list_run
+    runcmd=list_run
 elif ! test -z "$customcmd"; then
-	runcmd=custom_run
-	global_retval=127
+    runcmd=custom_run
+    global_retval=127
 else
-	runcmd=default_run
+    runcmd=default_run
 fi
 
 if test -z $listcmd; then
-	init_log
-	print_head
+    init_log
+    print_head
 fi
 
 $runcmd is_not_empty_sysvol "Check empty syslog catalog"
 $runcmd samba_version "Checking the latest installed version of Samba"
+custom_run samba_version "Checking the latest installed version of Samba"
 $runcmd admx_version "Checking for the installed admx-basealt package"
 $runcmd presence_files_and_dirs_samba "Checking for the existence of Samba service directories and configuration files"
 $runcmd test_hostname "Checking the full domain name of the host (FQDN)"

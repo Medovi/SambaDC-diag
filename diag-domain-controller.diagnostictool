@@ -1,12 +1,12 @@
 [Alterator Entry]
 Name = diag-domain-controller
 Type = Diagnostictool
-DisplayName = A tool for domain controller diagnostics
-DisplayName[ru_RU] = Инструмент для диагностики контроллера домена
-DisplayName[en_EN] = A tool for domain controller diagnostics
-Comment = The tool is designed to diagnose the status of a domain controller
-Comment[ru_RU] = Инструмент предназначен для диагностики состояния контроллера домена
-Comment[en_EN] = The tool is designed to diagnose the status of a domain controller
+DisplayName = Domain controller
+DisplayName[ru_RU] = Контроллер домена
+DisplayName[en_EN] = Domain controller
+Comment = A tool for diagnosing the status of a domain controller
+Comment[ru_RU] = Инструмент диагностики состояния контроллера домена
+Comment[en_EN] = A tool for diagnosing the status of a domain controller
 Icon = diag-domain-controller
 ReportSuffix = txt
 
@@ -20,19 +20,19 @@ Comment[en_EN] = check empty syslog catalog
 
 [samba_version]
 DisplayName = samba_version
-DisplayName[ru_RU] = Проверка последней установленной версии Samba
-DisplayName[en_EN] = Checking the latest installed version of Samba
-Comment = Checking the latest installed version of Samba
-Comment[ru_RU] = Проверка последней установленной версии Samba
-Comment[en_EN] = Checking the latest installed version of Samba
+DisplayName[ru_RU] = Проверка наличия пакета Samba
+DisplayName[en_EN] = Checking for the Samba package
+Comment = Checking for the Samba package
+Comment[ru_RU] = Проверка наличия пакета Samba
+Comment[en_EN] = Checking for the Samba package
 
 [admx_version]
 DisplayName = admx_version
-DisplayName[ru_RU] = Проверка на установленный пакет admx-basealt
-DisplayName[en_EN] = Checking for the installed admx-basealt package
-Comment = Checking for the installed admx-basealt package
-Comment[ru_RU] = Проверка на установленный пакет admx-basealt
-Comment[en_EN] = Checking for the installed admx-basealt package
+DisplayName[ru_RU] = Проверка наличия пакета admx-basealt
+DisplayName[en_EN] = Checking for the admx-basealt package
+Comment = Checking for the admx-basealt package
+Comment[ru_RU] = Проверка наличия пакета admx-basealt
+Comment[en_EN] = Checking for the admx-basealt package
 
 [presence_files_and_dirs_samba]
 DisplayName = presence_files_and_dirs_samba
