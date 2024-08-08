@@ -544,7 +544,6 @@ fi
 
 $runcmd is_not_empty_sysvol "Check empty syslog catalog"
 $runcmd samba_version "Checking the latest installed version of Samba"
-custom_run samba_version "Checking the latest installed version of Samba"
 $runcmd admx_version "Checking for the installed admx-basealt package"
 $runcmd presence_files_and_dirs_samba "Checking for the existence of Samba service directories and configuration files"
 $runcmd test_hostname "Checking the full domain name of the host (FQDN)"
