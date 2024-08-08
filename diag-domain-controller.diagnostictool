@@ -1,5 +1,5 @@
 [Alterator Entry]
-Name = sambadc-diag
+Name = diag-domain-controller
 Type = Diagnostictool
 DisplayName = A tool for domain controller diagnostics
 DisplayName[ru_RU] = Инструмент для диагностики контроллера домена
@@ -7,7 +7,7 @@ DisplayName[en_EN] = A tool for domain controller diagnostics
 Comment = The tool is designed to diagnose the status of a domain controller
 Comment[ru_RU] = Инструмент предназначен для диагностики состояния контроллера домена
 Comment[en_EN] = The tool is designed to diagnose the status of a domain controller
-Icon = system-run
+Icon = diag-domain-controller
 ReportSuffix = txt
 
 [is_not_empty_sysvol]
